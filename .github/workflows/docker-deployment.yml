@@ -21,3 +21,17 @@ jobs:
 
       - name: Push Docker image to Docker Hub
         run: docker push ${{ vars.DOCKER_USERNAME }}/food-app
+
+  deploy:
+    needs: build
+    runs-on: self-hosted
+
+    steps:
+      - name: Pull the Docker image
+        run: docker pull ${{ vars.DOCKER_USERNAME }}/food-app:latest
+
+      - name: Run the Docker container
+        run: docker container run -d --name food-app -p 80:80 ${{ vars.DOCKER_USERNAME }}/food-app:latest
+
+      - name: Check container status
+        run: docker ps -a
